@@ -1,6 +1,6 @@
 # RPI_SGP30
 
-Based on the smbus2 for ease of use. Program to read eCO_2 and TVOC from the [SGP30 sensor](https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/9_Gas_Sensors/Sensirion_Gas_Sensors_SGP30_Datasheet_EN.pdf).
+Program to read eCO_2 and TVOC from the [SGP30 sensor](https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/9_Gas_Sensors/Sensirion_Gas_Sensors_SGP30_Datasheet_EN.pdf). Based on the smbus2 i2c library for ease of use.
 
 It currently lacks support for many features features and is more of a crude demo than a proper library.
 
