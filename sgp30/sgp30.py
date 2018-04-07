@@ -9,7 +9,6 @@ import requests
 import os.path
 
 DEVICE_BUS = 1
-DEVICE_ADDR = 0x58
 BASELINE_FILENAME = os.path.expanduser("~/sgp_config_data.txt")
 
 class _commands():
@@ -30,6 +29,12 @@ class _commands():
         return baseline_cmd
 
 class Sgp30():
+
+    def __init__(self,bus,device_address = 0x58):
+        self._bus = bus
+        self._device_addr = device_address
+        self.rw=partial(read_write,bus=bus)
+        self._start_time = time()
 
     Sgp30Answer = namedtuple("Sgp30Answer",["data","raw"])
 
