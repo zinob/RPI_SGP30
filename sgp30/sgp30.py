@@ -11,10 +11,9 @@ import os.path
 DEVICE_BUS = 1
 DEVICE_ADDR = 0x58
 BASELINE_FILENAME = os.path.expanduser("~/sgp_config_data.txt")
-#print bus.write_byte_datadata(DEVICE_ADDR, 0x00, 0x01)
-#self._i2c_read_words_from_cmd([0x36, 0x82], 0.01, 3)
 
-class Sgp30():
+class _commands():
+    """container class for mapping between human readable names and the command values used by the sgp"""
     Sgp30Cmd = namedtuple("Sgp30Cmd",["commands","replylen","waittime"])
     GET_SERIAL=Sgp30Cmd([0x36, 0x82],6,10)
     GET_FEATURES=Sgp30Cmd([0x20, 0x15],2,2)
@@ -23,6 +22,14 @@ class Sgp30():
     IAQ_SELFTEST=Sgp30Cmd([0x20, 0x32],3,520)
     GET_BASELINE=Sgp30Cmd([0x20, 0x15],6,120)
     SET_BASELINE=Sgp30Cmd([0x20, 0x1e],0,10)
+
+    @classmethod
+    def new_set_baseline(cls,baseline_data):
+        baseline_cmd = copy(cls.SET_BASELINE)
+        baseline_cmd.commands += baseline_data
+        return baseline_cmd
+
+class Sgp30():
 
     Sgp30Answer = namedtuple("Sgp30Answer",["data","raw"])
 
@@ -42,9 +49,7 @@ class Sgp30():
     def try_set_baseline():
         try:
             with open(BASELINE_FILENAME,"w") as conf:
-                baseline=json.load(conf)
-                baseline_cmd = copy(SET_BASELINE)
-                baseline_cmd.commands += baseline
+                baseline_cmd = _commands.new_set_baseline(json.load(conf))
         except IOError:
             pass
         except ValueError:
