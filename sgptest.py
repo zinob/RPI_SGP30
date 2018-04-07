@@ -73,15 +73,38 @@ def store_baseline(n):
             baseline= rw(GET_BASELINE)
             json.dump(baseline.raw,conf)
 
+def http_post_data(url="http://localhost/setdata"):
+    try:
+        requests.get(url,params={"co2": co2eq,"tvoc":tvoc},timeout=.5)
+    except:
+        pass
+
 with SMBusWrapper(1) as bus:
     rw=partial(read_write,bus=bus)
-    print(rw(GET_FEATURES))
-    print(rw(GET_SERIAL))
-    print(rw(IAQ_INIT))
-    #print(rw(IAQ_SELFTEST,sleep_time=.1))
-    for i in range(600):
-        print( "CO_2eq: %d ppm, TVOC: %d"%tuple( rw(IAQ_MEASURE,sleep_time=.1)))
-        sleep(2)
-    
+    i2c_geral_call(bus)
+    print("Features: %s"%repr(rw(GET_FEATURES)))
+    print("Serial: %s"%repr(rw(GET_SERIAL)))
+    init_sgp(bus)
+    #print(rw(IAQ_SELFTEST))
+    print("Testing meassure")
+    print(rw(IAQ_MEASURE))
+    print("Testing meassure again")
+    sleep(1)
+    print(rw(IAQ_MEASURE))
+    sleep(1)
+    print("Running")
+    with open("/tmp/air.txt","w") as f:
+        n=0
+        while(True):
+            start = time()
+            n+=1
+            co2eq, tvoc = rw(IAQ_MEASURE).data
+            res = ( "%s CO_2eq: %d ppm, TVOC: %d"%( asctime(), co2eq, tvoc ))
+            print(res)
+            f.write("%i %i %i \n"%(time(),co2eq,tvoc))
+            http_post_data()
+            store_baseline(n)
+            elapsed = (time() - start)
+            sleep(1 - elapsed )
 
 bus.close()
