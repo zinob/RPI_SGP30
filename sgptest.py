@@ -3,7 +3,11 @@ from smbus2 import SMBusWrapper, SMBus, i2c_msg
 from collections import namedtuple 
 from functools import partial
 #import Adafruit_PureIO.smbus as adabus
-from time import sleep
+from time import sleep, asctime,time
+import json
+from copy import copy
+import requests
+import os.path
 
 DEVICE_BUS = 1
 DEVICE_ADDR = 0x58
