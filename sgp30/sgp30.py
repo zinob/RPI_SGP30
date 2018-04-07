@@ -68,6 +68,15 @@ class Sgp30():
         sleep(15)
 
     def i2c_geral_call(bus):
+        """This attempts to reset _ALL_ devices on the i2c buss
+        
+        This command issues the i2c-general call RW command that should result
+        in all devices aborting any read/write operations and starting to listen
+        for new i2c-commands.
+
+        This will usually un-stick the SGP30, but might reset or otherwise
+        affect any device on the bus.
+        """
         bus.write_byte(0,0x06)
         sleep(.1)
 
