@@ -11,7 +11,7 @@ import os.path
 DEVICE_BUS = 1
 BASELINE_FILENAME = os.path.expanduser("~/sgp_config_data.txt")
 
-class _commands():
+class _cmds():
     """container class for mapping between human readable names and the command values used by the sgp"""
     Sgp30Cmd = namedtuple("Sgp30Cmd",["commands","replylen","waittime"])
     GET_SERIAL=Sgp30Cmd([0x36, 0x82],6,10)
@@ -30,11 +30,12 @@ class _commands():
 
 class Sgp30():
 
-    def __init__(self,bus,device_address = 0x58):
+    def __init__(self,bus,device_address = 0x58, baseline_filename=BASELINE_FILENAME):
         self._bus = bus
         self._device_addr = device_address
-        self.rw=partial(read_write,bus=bus)
+        self.rw=partial(self.read_write)
         self._start_time = time()
+        self._baseline_filename=baseline_filename
 
     Sgp30Answer = namedtuple("Sgp30Answer",["data","raw"])
 
@@ -52,10 +53,10 @@ class Sgp30():
             answer = [i<<8 | j for i,j in zip(r[0::3],r[1::3])]
             return Sgp30Answer(answer,r)
 
-    def try_set_baseline():
+    def try_set_baseline(self):
         try:
-            with open(BASELINE_FILENAME,"w") as conf:
-                baseline_cmd = _commands.new_set_baseline(json.load(conf))
+            with open(self._baseline_filename,"w") as conf:
+                baseline_cmd = _cmds.new_set_baseline(json.load(conf))
         except IOError:
             pass
         except ValueError:
@@ -67,7 +68,7 @@ class Sgp30():
 
     def init_sgp(self):
         print("Initializing SGP30")
-        self.rw(IAQ_INIT)
+        self.rw(_cmds.IAQ_INIT)
         self.try_set_baseline()
         #print(rw(SET_BASELINE))
         print("Waiting for sensor warmup")
@@ -93,14 +94,14 @@ def store_baseline(n):
 
 def main():
     with SMBusWrapper(1) as bus:
-        rw=partial(read_write,bus=bus)
+        rw=partial(read_write)
         i2c_geral_call(bus)
         print("Features: %s"%repr(rw(GET_FEATURES)))
         print("Serial: %s"%repr(rw(GET_SERIAL)))
         init_sgp(bus)
-        #print(rw(IAQ_SELFTEST))
+        #print(rw(_cmds.IAQ_SELFTEST))
         print("Testing meassure")
-        print(rw(IAQ_MEASURE))
+        print(rw(_cmds.IAQ_MEASURE))
         print("Testing meassure again")
         sleep(1)
         print("Running")
@@ -108,7 +109,7 @@ def main():
         while(True):
             start = time()
             n+=1
-            co2eq, tvoc = rw(IAQ_MEASURE).data
+            co2eq, tvoc = rw(_cmds.IAQ_MEASURE).data
             res = ( "%s CO_2eq: %d ppm, TVOC: %d"%( asctime(), co2eq, tvoc ))
             print(res)
             f.write("%i %i %i \n"%(time(),co2eq,tvoc))
