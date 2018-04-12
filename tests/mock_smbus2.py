@@ -18,6 +18,8 @@ answers = {
 class MockSMBus:
     def __init__(s):
         s.status=None
+        s.last=None
+        s.addr=None
 
     def i2c_rdwr(s,*msgs):
         for m in msgs:
@@ -25,6 +27,12 @@ class MockSMBus:
                 s._process_read(m)
             else:
                 s._process_write(m)
+
+    def write_byte(s,addr,data):
+        s.status=None
+        s.addr=addr
+        s.last=data
+
     def _process_read(s,msg):
         if s.status == None:
             raise AssertionError("tired to read before write")
@@ -32,4 +40,5 @@ class MockSMBus:
             msg.buf[i]=chr(s.status[i])
     def _process_write(s,msg):
         s.status = answers[tuple(msg)]
+        s.last=msg
     
