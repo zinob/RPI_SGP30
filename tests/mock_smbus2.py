@@ -14,11 +14,22 @@ answers = {
     (0x20, 0x15): add_crc([0x00,0x00])*2 ,#GET_BASELINE  Invalid, should be more realistic data..
     (0x20, 0x1e): None,#SET_BASELINE
 }
+
 class MockSMBus:
     def __init__(s):
         s.status=None
 
     def i2c_rdwr(s,*msgs):
-            print(i2c_msg.read)
-        
+        for m in msgs:
+            if m.flags == 1:
+                s._process_read(m)
+            else:
+                s._process_write(m)
+    def _process_read(s,msg):
+        if s.status == None:
+            raise AssertionError("tired to read before write")
+        for i in range(len(s.status)):
+            msg.buf[i]=chr(s.status[i])
+    def _process_write(s,msg):
+        s.status = answers[tuple(msg)]
     
