@@ -38,15 +38,16 @@ class Sgp30():
 
     Sgp30Answer = namedtuple("Sgp30Answer",["data","raw"])
 
-    def read_write(cmd,bus,addr=DEVICE_ADDR):
-        write = i2c_msg.write(addr,cmd.commands)
+    def read_write(self,cmd):
+        write = i2c_msg.write(self._device_addr,cmd.commands)
         if cmd.replylen <= 0 :
-           bus.i2c_rdwr(write)
+           self._bus.i2c_rdwr(write)
         else:
-            read = i2c_msg.read(addr,cmd.replylen)
+            read = i2c_msg.read(self._device_addr,cmd.replylen)
             bus.i2c_rdwr(write) 
-            sleep(waittime/1000.0)
+            self._bus.i2c_rdwr(write) 
             bus.i2c_rdwr(read)
+            self._bus.i2c_rdwr(read)
             r = list(read)
             answer = [i<<8 | j for i,j in zip(r[0::3],r[1::3])]
             return Sgp30Answer(answer,r)
@@ -62,17 +63,16 @@ class Sgp30():
         else:
             if len(baseline) == 6:
                 print("Loading baseline data into sensor")
-                rw(baseline_cmd)
+                self.rw(baseline_cmd)
 
-    def init_sgp(bus):
+    def init_sgp(self):
         print("Initializing SGP30")
-        rw(IAQ_INIT)
-        print("Waiting for sensor warmup")
-        try_set_baseline()
+        self.rw(IAQ_INIT)
+        self.try_set_baseline()
         #print(rw(SET_BASELINE))
-        sleep(15)
+        print("Waiting for sensor warmup")
 
-    def i2c_geral_call(bus):
+    def i2c_geral_call(self):
         """This attempts to reset _ALL_ devices on the i2c buss
         
         This command issues the i2c-general call RW command that should result
@@ -82,7 +82,7 @@ class Sgp30():
         This will usually un-stick the SGP30, but might reset or otherwise
         affect any device on the bus.
         """
-        bus.write_byte(0,0x06)
+        self._bus.write_byte(0,0x06)
         sleep(.1)
 
 def store_baseline(n):
@@ -91,9 +91,7 @@ def store_baseline(n):
             baseline= rw(GET_BASELINE)
             json.dump(baseline.raw,conf)
 
-if __name__ == "__main__":
-    main()
-main():
+def main():
     with SMBusWrapper(1) as bus:
         rw=partial(read_write,bus=bus)
         i2c_geral_call(bus)
@@ -119,3 +117,6 @@ main():
             sleep(1 - elapsed )
 
     bus.close()
+
+if __name__ == "__main__":
+    main()
