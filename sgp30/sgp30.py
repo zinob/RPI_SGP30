@@ -47,8 +47,6 @@ class Sgp30():
         else:
             read = i2c_msg.read(self._device_addr,cmd.replylen)
             self._bus.i2c_rdwr(write) 
-            self._bus.i2c_rdwr(write) 
-            self._bus.i2c_rdwr(read)
             self._bus.i2c_rdwr(read)
             r = list(read)
             a = zip(r[0::3],r[1::3])
