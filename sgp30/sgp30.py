@@ -25,9 +25,8 @@ class _cmds():
 
     @classmethod
     def new_set_baseline(cls,baseline_data):
-        baseline_cmd = copy(cls.SET_BASELINE)
-        baseline_cmd.commands += baseline_data
-        return baseline_cmd
+        cmd = cls.SET_BASELINE
+        return cls.Sgp30Cmd(cmd.commands +baseline_data,cmd.replylen,cmd.waittime)
 
 class Sgp30():
 
@@ -39,7 +38,13 @@ class Sgp30():
         self._baseline_filename=baseline_filename
 
     Sgp30Answer = namedtuple("Sgp30Answer",["data","raw","crc_ok"])
+    
+    def _raw_validate_crc(s,r):
+        a = zip(r[0::3],r[1::3])
+        crc = r[2::3] == [Crc8().hash(i) for i in a ]
+        return(crc,a)
 
+        return (a,crc_ok)
     def read_write(self,cmd):
         write = i2c_msg.write(self._device_addr,cmd.commands)
         if cmd.replylen <= 0 :
@@ -49,23 +54,36 @@ class Sgp30():
             self._bus.i2c_rdwr(write) 
             self._bus.i2c_rdwr(read)
             r = list(read)
-            a = zip(r[0::3],r[1::3])
-            crc_ok = r[2::3] == [Crc8().hash(i) for i in a ]
+            crc_ok,a=self._raw_validate_crc(r)
             answer = [i<<8 | j for i,j in a]
             return self.Sgp30Answer(answer,r,crc_ok)
 
+    def store_baseline(self):
+        with open(self._baseline_filename,"w") as conf:
+            baseline=self.rw(_cmds.GET_BASELINE)
+            if baseline.crc_ok == True:
+                json.dump(baseline.raw,conf)
+                return True
+            else:
+                print("Ignoring baseline due to invalid CRC")
+                return False
+
     def try_set_baseline(self):
         try:
-            with open(self._baseline_filename,"w") as conf:
-                baseline_cmd = _cmds.new_set_baseline(json.load(conf))
+            with open(self._baseline_filename,"r") as conf:
+                conf = json.load(conf)
         except IOError:
             pass
         except ValueError:
             pass
         else:
-            if len(baseline) == 6:
-                print("Loading baseline data into sensor")
-                self.rw(baseline_cmd)
+            crc,_ = self._raw_validate_crc(conf)
+            if len(conf) == 6 and crc == True:
+                self.rw(_cmds.new_set_baseline(conf))
+                return True
+            else:
+                print("Failed to load CRC")
+                return False
 
     def read_measurements(self):
         return self.rw(_cmds.IAQ_MEASURE)
@@ -74,11 +92,10 @@ class Sgp30():
         return self.rw(_cmds.IAQ_SELFTEST)
 
     def init_sgp(self):
-        print("Initializing SGP30")
+        #print("Initializing SGP30")
         self.rw(_cmds.IAQ_INIT)
         self.try_set_baseline()
         #print(rw(SET_BASELINE))
-        print("Waiting for sensor warmup")
 
     def i2c_geral_call(self):
         """This attempts to reset _ALL_ devices on the i2c buss
@@ -93,11 +110,6 @@ class Sgp30():
         self._bus.write_byte(0,0x06)
         sleep(.1)
 
-def store_baseline(n):
-    if (n > 3600 * 12) and (n % 3600 == 3599):
-        with open(BASELINE_FILENAME,"w") as conf:
-            baseline= rw(GET_BASELINE)
-            json.dump(baseline.raw,conf)
 
 def main():
     with SMBusWrapper(1) as bus:
