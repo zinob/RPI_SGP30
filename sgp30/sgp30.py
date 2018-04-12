@@ -45,13 +45,13 @@ class Sgp30():
            self._bus.i2c_rdwr(write)
         else:
             read = i2c_msg.read(self._device_addr,cmd.replylen)
-            bus.i2c_rdwr(write) 
             self._bus.i2c_rdwr(write) 
-            bus.i2c_rdwr(read)
+            self._bus.i2c_rdwr(write) 
+            self._bus.i2c_rdwr(read)
             self._bus.i2c_rdwr(read)
             r = list(read)
             answer = [i<<8 | j for i,j in zip(r[0::3],r[1::3])]
-            return Sgp30Answer(answer,r)
+            return self.Sgp30Answer(answer,r)
 
     def try_set_baseline(self):
         try:
@@ -65,6 +65,9 @@ class Sgp30():
             if len(baseline) == 6:
                 print("Loading baseline data into sensor")
                 self.rw(baseline_cmd)
+
+    def read_measurements(self):
+        return self.rw(_cmds.IAQ_MEASURE)
 
     def init_sgp(self):
         print("Initializing SGP30")
