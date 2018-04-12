@@ -7,6 +7,7 @@ import json
 from copy import copy
 import requests
 import os.path
+from .crc import Crc8
 
 DEVICE_BUS = 1
 BASELINE_FILENAME = os.path.expanduser("~/sgp_config_data.txt")
@@ -37,7 +38,7 @@ class Sgp30():
         self._start_time = time()
         self._baseline_filename=baseline_filename
 
-    Sgp30Answer = namedtuple("Sgp30Answer",["data","raw"])
+    Sgp30Answer = namedtuple("Sgp30Answer",["data","raw","crc_ok"])
 
     def read_write(self,cmd):
         write = i2c_msg.write(self._device_addr,cmd.commands)
@@ -50,8 +51,10 @@ class Sgp30():
             self._bus.i2c_rdwr(read)
             self._bus.i2c_rdwr(read)
             r = list(read)
-            answer = [i<<8 | j for i,j in zip(r[0::3],r[1::3])]
-            return self.Sgp30Answer(answer,r)
+            a = zip(r[0::3],r[1::3])
+            crc_ok = r[2::3] == [Crc8().hash(i) for i in a ]
+            answer = [i<<8 | j for i,j in a]
+            return self.Sgp30Answer(answer,r,crc_ok)
 
     def try_set_baseline(self):
         try:
@@ -68,6 +71,9 @@ class Sgp30():
 
     def read_measurements(self):
         return self.rw(_cmds.IAQ_MEASURE)
+
+    def read_selftest(self):
+        return self.rw(_cmds.IAQ_SELFTEST)
 
     def init_sgp(self):
         print("Initializing SGP30")
