@@ -82,7 +82,7 @@ class Sgp30():
                 self.rw(_cmds.new_set_baseline(conf))
                 return True
             else:
-                print("Failed to load CRC")
+                print("Failed to load baseline, invalid data")
                 return False
 
     def read_measurements(self):

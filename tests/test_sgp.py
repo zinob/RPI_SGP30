@@ -41,7 +41,7 @@ class SimpleReadTests(unittest.TestCase):
         self.assertEqual(d.crc_ok,False)
 
 class TestBaselineMethods(unittest.TestCase):
-    """Basic test cases."""
+    """Basic tests for the load/save baseline-methods"""
     def setUp(self):
         self.bus = MockSMBus()
         self.sgp=sgp30.sgp30.Sgp30(self.bus,baseline_filename="/tmp/sgp-crc-test")
