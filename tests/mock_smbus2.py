@@ -36,12 +36,12 @@ class MockSMBus:
 
     def _process_read(s,msg):
         if s.status == None:
-            raise AssertionError("tired to read before write")
+            raise AssertionError("Tried to read before write")
         for i in range(len(s.status)):
             msg.buf[i]=chr(s.status[i])
             if s._break_crc and i%3 == 2:
                 msg.buf[i]=chr(s.status[i]^42)
-        self.status=None
+        s.status=None
                 
 
     def _process_write(s,msg):
