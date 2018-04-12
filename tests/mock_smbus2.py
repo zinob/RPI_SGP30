@@ -45,6 +45,6 @@ class MockSMBus:
                 
 
     def _process_write(s,msg):
-        s.status = answers[tuple(msg)]
+        s.status = answers[tuple(msg)[0:2]]
         s.last=msg
     
