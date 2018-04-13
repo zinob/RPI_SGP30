@@ -16,7 +16,7 @@ class _cmds():
     """container class for mapping between human readable names and the command values used by the sgp"""
     Sgp30Cmd = namedtuple("Sgp30Cmd",["commands","replylen","waittime"])
     GET_SERIAL=Sgp30Cmd([0x36, 0x82],6,10)
-    GET_FEATURES=Sgp30Cmd([0x20, 0x15],2,2)
+    GET_FEATURES=Sgp30Cmd([0x20, 0x2f],3,3)
     IAQ_INIT=Sgp30Cmd([0x20, 0x03],0,10)
     IAQ_MEASURE=Sgp30Cmd([0x20, 0x08],6,12)
     IAQ_SELFTEST=Sgp30Cmd([0x20, 0x32],3,520)
@@ -89,7 +89,13 @@ class Sgp30():
         return self.rw(_cmds.IAQ_MEASURE)
 
     def read_selftest(self):
-        return self.rw(_cmds.IAQ_SELFTEST)
+        return self.read_write(_cmds.IAQ_SELFTEST)
+
+    def read_serial(self):
+        return self.read_write(_cmds.GET_SERIAL)
+
+    def read_features(self):
+        return self.read_write(_cmds.GET_FEATURES)
 
     def init_sgp(self):
         #print("Initializing SGP30")
