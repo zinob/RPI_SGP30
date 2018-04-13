@@ -52,6 +52,7 @@ class Sgp30():
         else:
             read = i2c_msg.read(self._device_addr,cmd.replylen)
             self._bus.i2c_rdwr(write) 
+            sleep(cmd.waittime/1000.0)
             self._bus.i2c_rdwr(read)
             r = list(read)
             crc_ok,a=self._raw_validate_crc(r)
