@@ -15,13 +15,13 @@ BASELINE_FILENAME = os.path.expanduser("~/sgp_config_data.txt")
 class _cmds():
     """container class for mapping between human readable names and the command values used by the sgp"""
     Sgp30Cmd = namedtuple("Sgp30Cmd",["commands","replylen","waittime"])
-    GET_SERIAL=Sgp30Cmd([0x36, 0x82],6,10)
-    GET_FEATURES=Sgp30Cmd([0x20, 0x2f],3,3)
     IAQ_INIT=Sgp30Cmd([0x20, 0x03],0,10)
     IAQ_MEASURE=Sgp30Cmd([0x20, 0x08],6,12)
-    IAQ_SELFTEST=Sgp30Cmd([0x20, 0x32],3,520)
     GET_BASELINE=Sgp30Cmd([0x20, 0x15],6,120)
     SET_BASELINE=Sgp30Cmd([0x20, 0x1e],0,10)
+    IAQ_SELFTEST=Sgp30Cmd([0x20, 0x32],3,520)
+    GET_FEATURES=Sgp30Cmd([0x20, 0x2f],3,3)
+    GET_SERIAL=Sgp30Cmd([0x36, 0x82],9,10)
 
     @classmethod
     def new_set_baseline(cls,baseline_data):
