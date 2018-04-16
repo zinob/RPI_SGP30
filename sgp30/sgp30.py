@@ -33,7 +33,6 @@ class Sgp30():
     def __init__(self,bus,device_address = 0x58, baseline_filename=BASELINE_FILENAME):
         self._bus = bus
         self._device_addr = device_address
-        self.rw=partial(self.read_write)
         self._start_time = time()
         self._baseline_filename=baseline_filename
 
@@ -61,12 +60,12 @@ class Sgp30():
 
     def store_baseline(self):
         with open(self._baseline_filename,"w") as conf:
-            baseline=self.rw(_cmds.GET_BASELINE)
+            baseline=self.read_write(_cmds.GET_BASELINE)
             if baseline.crc_ok == True:
                 json.dump(baseline.raw,conf)
                 return True
             else:
-                print("Ignoring baseline due to invalid CRC")
+                #print("Ignoring baseline due to invalid CRC")
                 return False
 
     def try_set_baseline(self):
@@ -80,14 +79,14 @@ class Sgp30():
         else:
             crc,_ = self._raw_validate_crc(conf)
             if len(conf) == 6 and crc == True:
-                self.rw(_cmds.new_set_baseline(conf))
+                self.read_write(_cmds.new_set_baseline(conf))
                 return True
             else:
-                print("Failed to load baseline, invalid data")
+                #print("Failed to load baseline, invalid data")
                 return False
 
     def read_measurements(self):
-        return self.rw(_cmds.IAQ_MEASURE)
+        return self.read_write(_cmds.IAQ_MEASURE)
 
     def read_selftest(self):
         return self.read_write(_cmds.IAQ_SELFTEST)
@@ -100,9 +99,7 @@ class Sgp30():
 
     def init_sgp(self):
         #print("Initializing SGP30")
-        self.rw(_cmds.IAQ_INIT)
-        self.try_set_baseline()
-        #print(rw(SET_BASELINE))
+        self.read_write(_cmds.IAQ_INIT)
 
     def i2c_geral_call(self):
         """This attempts to reset _ALL_ devices on the i2c buss
