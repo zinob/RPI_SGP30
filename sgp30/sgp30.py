@@ -10,7 +10,7 @@ import os.path
 from .crc import Crc8
 
 DEVICE_BUS = 1
-BASELINE_FILENAME = os.path.expanduser("~/sgp_config_data.txt")
+BASELINE_FILENAME = os.path.expanduser("~/.sgp_config_data.txt")
 
 class _cmds():
     """container class for mapping between human readable names and the command values used by the sgp"""
@@ -19,6 +19,7 @@ class _cmds():
     IAQ_MEASURE=Sgp30Cmd([0x20, 0x08],6,12)
     GET_BASELINE=Sgp30Cmd([0x20, 0x15],6,120)
     SET_BASELINE=Sgp30Cmd([0x20, 0x1e],0,10)
+    SET_HUMIDITY=Sgp30Cmd([0x20, 0x61],0,10)
     IAQ_SELFTEST=Sgp30Cmd([0x20, 0x32],3,520)
     GET_FEATURES=Sgp30Cmd([0x20, 0x2f],3,3)
     GET_SERIAL=Sgp30Cmd([0x36, 0x82],9,10)
@@ -34,6 +35,7 @@ class Sgp30():
         self._bus = bus
         self._device_addr = device_address
         self._start_time = time()
+        self._last_save_time = time()
         self._baseline_filename=baseline_filename
 
     Sgp30Answer = namedtuple("Sgp30Answer",["data","raw","crc_ok"])
