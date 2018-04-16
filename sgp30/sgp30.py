@@ -117,29 +117,13 @@ class Sgp30():
 
 def main():
     with SMBusWrapper(1) as bus:
-        rw=partial(read_write)
-        i2c_geral_call(bus)
-        print("Features: %s"%repr(rw(GET_FEATURES)))
-        print("Serial: %s"%repr(rw(GET_SERIAL)))
-        init_sgp(bus)
-        #print(rw(_cmds.IAQ_SELFTEST))
-        print("Testing meassure")
-        print(rw(_cmds.IAQ_MEASURE))
-        print("Testing meassure again")
-        sleep(1)
-        print("Running")
-        n=0
-        while(True):
-            start = time()
-            n+=1
-            co2eq, tvoc = rw(_cmds.IAQ_MEASURE).data
-            res = ( "%s CO_2eq: %d ppm, TVOC: %d"%( asctime(), co2eq, tvoc ))
-            print(res)
-            f.write("%i %i %i \n"%(time(),co2eq,tvoc))
-            store_baseline(n)
-            elapsed = (time() - start)
-            sleep(1 - elapsed )
-
+        sgp=Sgp30(bus,baseline_filename=BASELINE_FILENAME+".TESTING")
+        print("resetting all i2c devices")
+        sgp.i2c_geral_call()
+        print(sgp.read_features())
+        print(sgp.read_serial())
+        sgp.init_sgp()
+        print(sgp.read_measurements())
     bus.close()
 
 if __name__ == "__main__":
