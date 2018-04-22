@@ -3,7 +3,7 @@
 
 from setuptools import setup, find_packages
 
-with open('README.md') as f:
+with open('README.rst') as f:
     readme = f.read()
 with open('LICENSE') as f:
     license = f.read()
@@ -11,9 +11,8 @@ with open('LICENSE') as f:
 setup(
     name='sgp30',
     description='Library for reading data from the sensiron SGP30',
-    version='0.1.0',
+    version='0.1.2',
     long_description=readme,
-    long_description_content_type='text/markdown',
     author='Simon Albinsson',
     author_email='pipmon@zinob.se',
     url='https://github.com/zinob/RPI_SGP30',
