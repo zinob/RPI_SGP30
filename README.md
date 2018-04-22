@@ -4,6 +4,7 @@ Program to read eCO_2 and TVOC from the [SGP30 sensor](https://www.sensirion.com
 
 
 Quick usage-example: 
+
 	 from sgp30 import Sgp30
 	 import time
     with SMBusWrapper(1) as bus:
