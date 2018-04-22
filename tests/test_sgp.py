@@ -1,6 +1,6 @@
 from .context import sgp30
 
-from mock_smbus2 import MockSMBus
+from .mock_smbus2 import MockSMBus
 import unittest
 
 class TestConstructor(unittest.TestCase):
