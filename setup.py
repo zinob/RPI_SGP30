@@ -10,10 +10,10 @@ with open('LICENSE') as f:
 
 setup(
     name='sgp30',
-    description='Library for reading data from the sensiron SGP30' 
+    description='Library for reading data from the sensiron SGP30',
     version='0.1.0',
     long_description=readme,
-    author='Kenneth Reitz',
+    author='Simon Albinsson',
     author_email='pipmon@zinob.se',
     url='https://github.com/zinob/RPI_SGP30',
     license=license,
