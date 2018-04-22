@@ -13,6 +13,7 @@ setup(
     description='Library for reading data from the sensiron SGP30',
     version='0.1.0',
     long_description=readme,
+    long_description_content_type='text/markdown',
     author='Simon Albinsson',
     author_email='pipmon@zinob.se',
     url='https://github.com/zinob/RPI_SGP30',
