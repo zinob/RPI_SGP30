@@ -17,5 +17,6 @@ setup(
     author_email='pipmon@zinob.se',
     url='https://github.com/zinob/RPI_SGP30',
     license=license,
-    packages=find_packages(exclude=('tests'))
+    packages=find_packages(exclude=('tests')),
+    install_requires=['smbus2']
 )
