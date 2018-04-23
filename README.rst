@@ -5,11 +5,11 @@ Program to read eCO_2 and TVOC from the `SGP30 sensor <https://www.sensirion.com
 
 
 Quick usage-example:
--------------------_
+--------------------
 ::
 
-	 from sgp30 import Sgp30
-	 import time
+    from sgp30 import Sgp30
+    import time
     with SMBusWrapper(1) as bus:
         sgp=Sgp30(bus,baseline_filename="/tmp/mySGP30_baseline") #things thing with the baselinefile is dumb and will be changed in the future
         print("resetting all i2c devices")
@@ -18,12 +18,12 @@ Quick usage-example:
         print(sgp.read_serial())
         sgp.init_sgp()
         print(sgp.read_measurements())
-		  print("the SGP30 takes at least 15 seconds to warm up, 12 hours before the readigs become really stable"
-		  for i in range(20):
-			  time.sleep(1)
-			  print(".",end="")
-		  print()
-        print(sgp.read_measurements())
+        print("the SGP30 takes at least 15 seconds to warm up, 12 hours before the readigs become really stable"
+     	  for i in range(20):
+     		  time.sleep(1)
+     		  print(".",end="")
+     	  print()
+           print(sgp.read_measurements())
 
 Features that are known to be missing (listing in rough order of importance):
 -----------------------------------------------------------------------------
