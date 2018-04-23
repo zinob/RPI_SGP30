@@ -2,11 +2,17 @@ from collections import namedtuple
 
 from .context import sgp30
 from time import time
+import sys
 
 I2CAnswers= namedtuple("I2CAnswers",["answer","min_delay"])
 I2A = I2CAnswers
 def add_crc(l):
     return l + [sgp30.Crc8().hash(l)]
+
+if sys.version_info[0] < 3:
+    byte_from_int = chr
+else:
+    byte_from_int = lambda x: bytes([x])
 
 answers = {
     (0x36, 0x82): I2A(add_crc([0,0]),.4), #GET_SERIAL
@@ -47,9 +53,9 @@ class MockSMBus:
         if s.status == None:
             raise AssertionError("Tried to read before write")
         for i in range(len(s.status)):
-            msg.buf[i]=chr(s.status[i])
+            msg.buf[i]=byte_from_int(s.status[i])
             if s._break_crc and i%3 == 2:
-                msg.buf[i]=chr(s.status[i]^42)
+                msg.buf[i]=byte_from_int(s.status[i]^42)
         s.status=None
                 
 
