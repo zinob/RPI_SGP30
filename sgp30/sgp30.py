@@ -45,7 +45,6 @@ class Sgp30():
         crc = r[2::3] == [Crc8().hash(i) for i in a ]
         return(crc,a)
 
-        return (a,crc_ok)
     def read_write(self,cmd):
         write = i2c_msg.write(self._device_addr,cmd.commands)
         if cmd.replylen <= 0 :

@@ -1,4 +1,3 @@
-from smbus2 import i2c_msg
 from collections import namedtuple 
 
 from .context import sgp30
