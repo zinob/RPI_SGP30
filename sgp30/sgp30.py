@@ -41,7 +41,7 @@ class Sgp30():
     Sgp30Answer = namedtuple("Sgp30Answer",["data","raw","crc_ok"])
     
     def _raw_validate_crc(s,r):
-        a = zip(r[0::3],r[1::3])
+        a = list(zip(r[0::3],r[1::3]))
         crc = r[2::3] == [Crc8().hash(i) for i in a ]
         return(crc,a)
 
