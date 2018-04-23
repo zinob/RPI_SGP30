@@ -3,6 +3,7 @@ RPI_SGP30
 
 Library to read |eCO_2| and TVOC from the `SGP30 sensor <https://www.sensirion.com/fileadmin/user_upload/customers/sensirion/Dokumente/9_Gas_Sensors/Sensirion_Gas_Sensors_SGP30_Datasheet_EN.pdf>`_. Based on the smbus2 i2c library for ease of use.
 
+It should be compatible with both python 2 and 3 but is currently only tested under Python 2.7
 
 Quick usage-example:
 --------------------
@@ -27,16 +28,16 @@ Quick usage-example:
            print(sgp.read_measurements())
 
 Current design considerations:
--------------------------------
+------------------------------
 The class strives to to be light-weight and portable. It is currently a bit to tightly bound to the smbus2 class. In most cases I try to ease of readability rather than purity or speed.
 
 Features that are known to be missing (listing in rough order of importance):
 -----------------------------------------------------------------------------
-* Fix python3 compatibility.
 * The handing of baseline values is not that great, it should probably be up to the end user to save and restore them as needed.
 * Write doc-strings for all or at least most methods.
 * reading raw-values.
 * A more "driver like" class that takes care of all chip identification, polling at regular intervals, restoring baseline and so on.
+* Run real hardware tests under Python3
 
 Hardware notices:
 -----------------
