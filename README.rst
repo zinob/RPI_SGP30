@@ -26,16 +26,23 @@ Quick usage-example:
      	  print()
            print(sgp.read_measurements())
 
+Current design considerations:
+-------------------------------
+The class strives to to be light-weight and portable. It is currently a bit to tightly bound to the smbus2 class. In most cases I try to ease of readability rather than purity or speed.
+
 Features that are known to be missing (listing in rough order of importance):
 -----------------------------------------------------------------------------
 * Fix python3 compatibility.
-* The handing of baseline values are not that great, it should probably be up to the end user to save and restore them as needed.
+* The handing of baseline values is not that great, it should probably be up to the end user to save and restore them as needed.
 * Write doc-strings for all or at least most methods.
 * reading raw-values.
-* A more "driver like" class that took care of all chip identification, polling intervals store baseline and so on.
+* A more "driver like" class that takes care of all chip identification, polling at regular intervals, restoring baseline and so on.
 
 Hardware notices:
 -----------------
 If you have the Adafruit board with built in level shifters and voltage regulator it is should work if you just plug in `SDA to pin 3, SCL to pin 5, VCC to pin 17 and GND to pin 20 <https://pinout.xyz/pinout/i2c>`_. You should then be able to find the SGP30 an address 0x58 using `i2cdetect -y 1`. If you get an error message  you probably need to enable i2c in the kernel using  `raspi-config and reboot <https://learn.sparkfun.com/tutorials/raspberry-pi-spi-and-i2c-tutorial>`_
+
+
+Feel free to contact me with bugs, questions or issues.
 
 .. |eCO_2| replace:: eCO\ :sub:`2`
