@@ -5,7 +5,7 @@ Program to read eCO_2 and TVOC from the `SGP30 sensor <https://www.sensirion.com
 
 
 Quick usage-example:
--------------------
+-------------------_
 ::
 
 	 from sgp30 import Sgp30
@@ -26,7 +26,7 @@ Quick usage-example:
         print(sgp.read_measurements())
 
 Features that are known to be missing (listing in rough order of importance):
----------------------------
+-----------------------------------------------------------------------------
 * Fix python3 compatibility.
 * The handing of baseline values are not that great, it should probably be up to the end user to save and restore them as needed.
 * Write doc-strings for all or at least most methods.
