@@ -3,5 +3,7 @@ test:
 	python2 -m unittest discover
 
 uppload:
+	mkdir -p dist.old
+	mv dist/* dist.old/
 	python setup.py sdist
 	twine upload dist/*
