@@ -24,7 +24,9 @@ class SimpleReadTests(unittest.TestCase):
         self.sgp=sgp30.sgp30.Sgp30(self.bus)
 
     def test_read(self):
-        self.assertEqual(self.sgp.read_measurements().data,[400,6])
+        d=self.sgp.read_measurements()
+        self.assertEqual(d.raw,[1, 144, 76, 0, 6, 39])
+        self.assertEqual(d.data,[400,6])
 
     #No real need to do this super-carefully
     #or i will just be testing my own test code
