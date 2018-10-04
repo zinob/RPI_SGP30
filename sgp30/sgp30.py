@@ -5,7 +5,6 @@ from functools import partial
 from time import sleep, asctime,time
 import json
 from copy import copy
-import requests
 import os.path
 from .crc import Crc8
 
