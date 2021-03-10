@@ -1,5 +1,5 @@
 import smbus2
-from smbus2 import SMBusWrapper, SMBus, i2c_msg
+from smbus2 import SMBus, i2c_msg
 from collections import namedtuple 
 from functools import partial
 from time import sleep, asctime,time
@@ -116,7 +116,7 @@ class Sgp30():
 
 
 def main():
-    with SMBusWrapper(1) as bus:
+    with SMBus(1) as bus:
         sgp=Sgp30(bus,baseline_filename=BASELINE_FILENAME+".TESTING")
         print("resetting all i2c devices")
         sgp.i2c_geral_call()
